@@ -1,0 +1,45 @@
+name: Security Weekly Full Scan
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # weekly on Sunday UTC
+  workflow_dispatch: {}
+
+jobs:
+  weekly-scan:
+    name: Weekly full security scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Semgrep full ruleset
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: 'p/security-audit,p/python,p/owasp-top-ten'
+
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          format: 'sarif'
+          output: 'trivy.sarif'
+          scan-type: 'fs'
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: --redact --report-format sarif --report-path gitleaks.sarif || ''
+
+      - name: pip-audit
+        uses: pypa/gh-action-pip-audit@v1
+        with:
+          args: --output-format json --output-file pip_audit.json || true
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-artifacts
+          path: |
+            trivy.sarif
+            gitleaks.sarif
+            pip_audit.json

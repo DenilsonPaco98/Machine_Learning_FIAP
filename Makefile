@@ -61,5 +61,9 @@ clean:
 		@echo "Validando GitHub Actions com actionlint (docker)"
 		docker run --rm -v $(PWD):/workdir -w /workdir rhysd/actionlint:latest actionlint -config /dev/null || true
 
-	security-scan: semgrep-local trivy-local gitleaks-local actionlint-local
+	pip-audit-local:
+		@echo "Executando pip-audit local via Docker"
+		docker run --rm -v $(PWD):/app -w /app python:3.10-slim /bin/sh -c "pip install pip-audit && pip-audit --output=json -o pip_audit.json || true"
+
+	security-scan: semgrep-local trivy-local gitleaks-local actionlint-local pip-audit-local
 		@echo "Executou todas as varreduras de segurança locais"
