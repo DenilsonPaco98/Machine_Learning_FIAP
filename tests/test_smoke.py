@@ -1,3 +1,13 @@
+from fastapi.testclient import TestClient
+from src.api.app import app
+
+
+def test_app_starts():
+    client = TestClient(app)
+    resp = client.get("/")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "message" in data and "version" in data
 """Testes de smoke (em Português).
 
 Verifica que a API inicia corretamente e que o endpoint /health responde.
