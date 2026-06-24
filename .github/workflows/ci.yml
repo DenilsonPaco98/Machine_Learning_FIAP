@@ -13,8 +13,8 @@ permissions:
   id-token: write
 
 jobs:
-  test-and-scan:
-    name: Tests, Coverage & Scans
+  unit-tests:
+    name: Unit Tests & SonarCloud
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -42,11 +42,30 @@ jobs:
           name: coverage-report
           path: coverage.xml
 
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >-
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.python.version=3.10
+            -Dsonar.sources=src
+            -Dsonar.tests=tests
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+
+  security-scans:
+    name: Security Scans (Semgrep, Trivy, Gitleaks, pip-audit, actionlint)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Semgrep SAST
         uses: returntocorp/semgrep-action@v1
         with:
           config: 'p/ci'
-        # If SEMGREP_APP_TOKEN is set as a secret it will send results to semgrep.dev
 
       - name: Upload Semgrep SARIF
         if: always()
@@ -93,26 +112,3 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: gitleaks.sarif || ''
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v3
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >-
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.python.version=3.10
-            -Dsonar.sources=src
-            -Dsonar.tests=tests
-            -Dsonar.python.coverage.reportPaths=coverage.xml
-
-  gate-check:
-    name: SonarCloud Quality Gate
-    runs-on: ubuntu-latest
-    needs: test-and-scan
-    steps:
-      - name: Wait for SonarCloud Quality Gate
-        uses: sonarsource/sonarcloud-quality-gate-action@v1
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

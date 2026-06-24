@@ -23,8 +23,8 @@ Siga estes passos para ativar o pipeline de qualidade e segurança para reposit�
    - Branch name pattern: `main`
    - Ativar: Require status checks to pass before merging
    - Selecionar checks obrigatórios (aparecerão após primeiro run do workflow):
-     - `CI / test-and-scan` (nome do job)
-     - `CI / gate-check` (Quality Gate)
+   - `CI / unit-tests` (nome do job de testes e SonarCloud)
+   - `CI / security-scans` (job de varreduras de segurança)
    - Salvar
 
 4) Rodando localmente
