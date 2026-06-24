@@ -49,5 +49,17 @@ clean:
 		@echo "Executando Semgrep local via Docker"
 		docker run --rm -v $(PWD):/src -w /src returntocorp/semgrep semgrep --config p/ci
 
-	security-scan: semgrep-local
+	trivy-local:
+		@echo "Executando Trivy local (FS scan) via Docker"
+		docker run --rm -v $(PWD):/project -w /project aquasec/trivy:latest fs --format sarif -o trivy.sarif . || true
+
+	gitleaks-local:
+		@echo "Executando Gitleaks local via Docker"
+		docker run --rm -v $(PWD):/src zricethezav/gitleaks:latest detect --source=/src --report-format=json --report-path=gitleaks.json || true
+
+	actionlint-local:
+		@echo "Validando GitHub Actions com actionlint (docker)"
+		docker run --rm -v $(PWD):/workdir -w /workdir rhysd/actionlint:latest actionlint -config /dev/null || true
+
+	security-scan: semgrep-local trivy-local gitleaks-local actionlint-local
 		@echo "Executou todas as varreduras de segurança locais"

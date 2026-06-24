@@ -1,4 +1,4 @@
-name: CI
+name: CI - Tests & Security
 
 on:
   push:
@@ -14,14 +14,14 @@ permissions:
 
 jobs:
   test-and-scan:
-    name: Test, Coverage & Security Scans
+    name: Tests, Coverage & Scans
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -32,50 +32,80 @@ jobs:
           pip install coverage pytest pytest-cov
 
       - name: Run tests with coverage
+        id: pytest
         run: |
           pytest tests/ -q --maxfail=1 --disable-warnings --cov=src --cov-report=xml:coverage.xml
 
-      - name: Upload coverage to artifact
+      - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage.xml
 
-      - name: Run Semgrep (SAST)
-        uses: returntocorp/semgrep-action@v2
+      - name: Semgrep SAST
+        uses: returntocorp/semgrep-action@v1
         with:
           config: 'p/ci'
-        # If you have SEMGREP_APP_TOKEN set as a secret it will send to semgrep.dev
+        # If SEMGREP_APP_TOKEN is set as a secret it will send results to semgrep.dev
 
-      - name: Upload SARIF (Semgrep)
+      - name: Upload Semgrep SARIF
         if: always()
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: semgrep.sarif || ''
 
-      - name: Run GHA Scanner (workflow scan)
-        uses: raajheshkannaa/gha-scanner@v1
+      - name: Actionlint (validate GH workflows)
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/workdir -w /workdir rhysd/actionlint:latest actionlint || true
+
+      - name: Trivy - Filesystem scan (vulnerabilities)
+        uses: aquasecurity/trivy-action@master
         with:
-          annotate: true
+          format: 'sarif'
+          output: 'trivy.sarif'
+          scan-type: 'fs'
+
+      - name: Upload Trivy SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy.sarif || ''
+
+      - name: OSV Scanner (dependency vuln scan)
+        uses: google/osv-scanner-action@v1
+        with:
+          format: 'sarif'
+          output: 'osv.sarif'
+
+      - name: Upload OSV SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: osv.sarif || ''
+
+      - name: Gitleaks - Secret detection
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: --redact --report-format sarif --report-path gitleaks.sarif || ''
+
+      - name: Upload Gitleaks SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: gitleaks.sarif || ''
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@v3
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >-
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.python.version=3.10
             -Dsonar.sources=src
             -Dsonar.tests=tests
-            -Dsonar.python.version=3.10
             -Dsonar.python.coverage.reportPaths=coverage.xml
-
-      - name: Upload Semgrep SARIF to Security Tab
-        if: always()
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: semgrep.sarif || ''
 
   gate-check:
     name: SonarCloud Quality Gate
@@ -83,6 +113,6 @@ jobs:
     needs: test-and-scan
     steps:
       - name: Wait for SonarCloud Quality Gate
-        uses: sonarsource/sonarcloud-quality-gate-action@master
+        uses: sonarsource/sonarcloud-quality-gate-action@v1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

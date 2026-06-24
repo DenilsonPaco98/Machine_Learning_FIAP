@@ -1,0 +1,37 @@
+name: Security - Scheduled Full Scan
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # weekly on Sunday UTC
+  workflow_dispatch: {}
+
+jobs:
+  full-scan:
+    name: Full security scan (Semgrep, Trivy, Gitleaks, Actionlint)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Semgrep full ruleset
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: 'p/security-audit,p/python,p/owasp-top-ten'
+
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          format: 'sarif'
+          output: 'trivy.sarif'
+          scan-type: 'fs'
+
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: --redact --report-format sarif --report-path gitleaks.sarif || ''
+
+      - name: Upload SARIFs
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: |
+            trivy.sarif
+            gitleaks.sarif
