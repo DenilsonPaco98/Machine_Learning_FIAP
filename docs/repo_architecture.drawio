@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-06-24T00:00:00.000Z" agent="5.0 (Windows)" etag="abc" version="20.5.3" type="device">
+  <diagram id="repo-arch" name="Repository Architecture">
+    <mxGraphModel dx="1000" dy="600" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Repositório Principal -->
+        <mxCell id="repo" value="Repositório Principal" style="rounded=1;fillColor=#F5F5F5;strokeColor=#2B579A;fontSize=14;fontColor=#000000;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="700" height="240" as="geometry"/>
+        </mxCell>
+
+        <!-- src folder -->
+        <mxCell id="src" value="src/\n- Módulos principais\n- Componentes" style="rounded=1;fillColor=#FFFFFF;strokeColor=#1E8449;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="repo">
+          <mxGeometry x="20" y="20" width="220" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- tests folder -->
+        <mxCell id="tests" value="tests/\n- Testes unitários\n- Testes de integração" style="rounded=1;fillColor=#FFFFFF;strokeColor=#B03A2E;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="repo">
+          <mxGeometry x="260" y="20" width="220" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- docs folder -->
+        <mxCell id="docs" value="docs/\n- Documentação" style="rounded=1;fillColor=#FFFFFF;strokeColor=#4A235A;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="repo">
+          <mxGeometry x="500" y="20" width="180" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- config folder -->
+        <mxCell id="config" value="config/\n- Lint / Build / CI" style="rounded=1;fillColor=#FFFFFF;strokeColor=#117A65;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="repo">
+          <mxGeometry x="20" y="130" width="220" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- README -->
+        <mxCell id="readme" value="README.md" style="rounded=1;fillColor=#FFE599;strokeColor=#7F6000;align=center;fontSize=12;" vertex="1" parent="repo">
+          <mxGeometry x="260" y="130" width="160" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- gitignore -->
+        <mxCell id="gitignore" value=".gitignore" style="rounded=1;fillColor=#EFEFEF;strokeColor=#7F8C8D;align=center;fontSize=12;" vertex="1" parent="repo">
+          <mxGeometry x="440" y="130" width="120" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- requirements -->
+        <mxCell id="requirements" value="requirements.txt\n(or package.json)" style="rounded=1;fillColor=#FCE4EC;strokeColor=#C2185B;align=center;fontSize=12;" vertex="1" parent="repo">
+          <mxGeometry x="580" y="130" width="140" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Developer -->
+        <mxCell id="dev" value="Desenvolvedor" style="ellipse;whiteSpace=wrap;html=1;fillColor=#D6EAF8;strokeColor=#2E86C1;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="120" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Commit -->
+        <mxCell id="commit" value="Commit" style="rounded=1;fillColor=#F9E79F;strokeColor=#B9770E;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="200" y="300" width="120" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Branch -->
+        <mxCell id="branch" value="Branch" style="rounded=1;fillColor=#D5F5E3;strokeColor=#239B56;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="360" y="300" width="120" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Pull Request -->
+        <mxCell id="pr" value="Pull Request" style="rounded=1;fillColor=#FADBD8;strokeColor=#C0392B;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="520" y="300" width="140" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Merge -->
+        <mxCell id="merge" value="Merge" style="rounded=1;fillColor=#E8DAEF;strokeColor=#6C3483;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="700" y="300" width="100" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- CI/CD -->
+        <mxCell id="cicd" value="Pipeline CI/CD\n(Tests → Scans → Build → Deploy)" style="rounded=1;fillColor=#FEF9E7;strokeColor=#F39C12;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="360" y="360" width="300" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Deploy -->
+        <mxCell id="deploy" value="Deploy" style="hexagon;fillColor=#D5DBDB;strokeColor=#34495E;fontSize=12;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="720" y="360" width="120" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;strokeColor=#000000;endArrow=block;" edge="1" parent="1" source="dev" target="commit">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;strokeColor=#000000;endArrow=block;" edge="1" parent="1" source="commit" target="branch">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;strokeColor=#000000;endArrow=block;" edge="1" parent="1" source="branch" target="pr">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;strokeColor=#000000;endArrow=block;" edge="1" parent="1" source="pr" target="merge">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;strokeColor=#000000;endArrow=block;" edge="1" parent="1" source="merge" target="cicd">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;strokeColor=#000000;endArrow=block;" edge="1" parent="1" source="cicd" target="deploy">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend" value="Fluxo: Desenvolvedor → Commit → Branch → Pull Request → Merge → Pipeline CI/CD → Deploy" style="text;html=1;align=left;verticalAlign=top;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="460" width="800" height="60" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

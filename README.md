@@ -185,14 +185,26 @@ make semgrep-local
 make sonar-local
 ```
 
-Configuração rápida:
+## 🖼️ Diagrama da Arquitetura (draw.io)
 
-- Crie uma conta em https://sonarcloud.io com GitHub OAuth e importe o repositório.
-- Gere um token SONAR_TOKEN e adicione como `Secrets` no GitHub: Settings → Secrets and variables → Actions.
-- (Opcional) Registre-se em https://semgrep.dev e adicione `SEMGREP_APP_TOKEN` como secret.
-- Ative Branch Protection em `main` exigindo os checks:
-  - SonarCloud Code Analysis
-  - Semgrep Security Analysis
-  - GHA Scanner
+O diagrama do repositório foi criado em `docs/repo_architecture.drawio`.
 
-Ver mais detalhes em `.github/workflows/ci.yml` e `.github/workflows/security.yml`.
+Para incluir uma imagem PNG no README siga estes passos:
+
+1. Abra `docs/repo_architecture.drawio` no editor web diagrams.net (https://app.diagrams.net/) ou na app desktop.
+2. Arquivo → Export as → PNG → exporte para `docs/repo_architecture.png`.
+3. Commit e push do arquivo PNG:
+
+```powershell
+git add docs/repo_architecture.png
+git commit -m "docs: add repository architecture diagram PNG"
+git push origin YOUR_BRANCH
+```
+
+Após commitar, a imagem ficará disponível no README:
+
+![Repository Architecture](docs/repo_architecture.png)
+
+Se preferir, gere o PNG manualmente na interface e commit imediatamente.
+
+
